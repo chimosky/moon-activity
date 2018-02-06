@@ -1,0 +1,386 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Moon XO's Activity translation
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Gabriel Menini <gabriel.menini@gmail.com>, 2008.
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-10-03 00:33-0400\n"
+"PO-Revision-Date: 2012-10-13 05:13+0200\n"
+"Last-Translator: AlanJAS <alanjas@hotmail.com>\n"
+"Language-Team: Spanish <LL@li.org>\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.0.5\n"
+
+#. TRANS: "name" option from activity.info file
+#: moon.py:68
+msgid "Moon"
+msgstr "Luna"
+
+#. TRANS: "summary" option from activity.info file
+#. TRANS: "description" option from activity.info file
+msgid ""
+"For all those interested in the moon! See the different phases of the moon, "
+"latitudes and longtiutdes and impress all by \"predicting\" the next full "
+"moon!"
+msgstr ""
+"¡Para todos aquellos interesados ​​en la luna! Ve las diferentes fases de la "
+"luna, latitudes y longtiudes e impresiona a todos en \"predecir\" la próxima "
+"luna llena."
+
+#. TRANS: Date format for next full/new moon and next solar/lunar eclipse
+#: moon.py:60
+#, python-format
+msgid "%c"
+msgstr "%c"
+
+#: moon.py:92 moon.py:118
+msgid "Toggle Grid View"
+msgstr "Cambiar a vista grilla"
+
+#: moon.py:98 moon.py:124
+msgid "Toggle Hemisphere View"
+msgstr "Cambiar a vista hemisferio"
+
+#: moon.py:130
+msgid "View"
+msgstr "Ver"
+
+#: moon.py:250
+msgid ""
+"Today's Moon Information\n"
+"\n"
+msgstr ""
+"Información de la Luna para hoy\n"
+"\n"
+
+#: moon.py:252
+#, python-format
+msgid ""
+"Phase:\n"
+"%s\n"
+"\n"
+msgstr ""
+"Fase:\n"
+"%s\n"
+"\n"
+
+#: moon.py:253
+#, python-format
+msgid ""
+"Julian Date:\n"
+"%.2f (astronomical)\n"
+"\n"
+msgstr ""
+"Fecha Juliana:\n"
+"%.2f (astronómical)\n"
+"\n"
+
+#: moon.py:254
+#, python-format
+msgid ""
+"Age:\n"
+"%(days).0f days, %(hours).0f hours, %(minutes).0f minutes\n"
+"\n"
+msgstr ""
+"Edad:\n"
+"%(days).0f días, %(hours).0f horas, %(minutes).0f minutos\n"
+"\n"
+
+#: moon.py:255
+#, python-format
+msgid ""
+"Lunation:\n"
+"%(phase).2f%% through lunation %(lunation)d\n"
+"\n"
+msgstr ""
+"Lunación:\n"
+"%(phase).2f%% hasta la lunación %(lunation)d\n"
+"\n"
+
+#: moon.py:256
+#, python-format
+msgid ""
+"Surface Visibility:\n"
+"%.0f%% (estimated)\n"
+"\n"
+msgstr ""
+"Visibilidad de la superficie:\n"
+"%.0f%% (estimada)\n"
+"\n"
+
+#: moon.py:257
+#, python-format
+msgid ""
+"Selenographic Terminator Longitude:\n"
+"%(deg).1f°%(westOrEast)s (%(riseOrSet)s)\n"
+"\n"
+msgstr ""
+"Longitud del terminador selenográfico:\n"
+"%(deg).1f°%(westOrEast)s (%(riseOrSet)s)\n"
+"\n"
+
+#: moon.py:258
+#, python-format
+msgid ""
+"Next Full Moon:\n"
+"%(date)s in %(days).0f days\n"
+"\n"
+msgstr ""
+"Próxima Luna Llena:\n"
+"%(date)s en %(days).0f días\n"
+"\n"
+
+#: moon.py:259
+#, python-format
+msgid ""
+"Next New Moon:\n"
+"%(date)s in %(days).0f days\n"
+"\n"
+msgstr ""
+"Próxima Luna Nueva:\n"
+"%(date)s en %(days).0f días\n"
+"\n"
+
+#: moon.py:260
+#, python-format
+msgid ""
+"Next Lunar eclipse:\n"
+"%(date)s in %(days).0f days\n"
+"\n"
+msgstr ""
+"Próximo eclipse lunar:\n"
+"%(date)s en %(days).0f días\n"
+"\n"
+
+#: moon.py:261
+#, python-format
+msgid ""
+"Next Solar eclipse:\n"
+"%(date)s in %(days).0f days\n"
+"\n"
+msgstr ""
+"Próximo eclipse solar:\n"
+"%(date)s en %(days).0f días\n"
+"\n"
+
+#: moon.py:354
+msgid "SNWE"
+msgstr "SNWE"
+
+#: moon.py:357
+msgid "NSEW"
+msgstr "NSEW"
+
+#: moon.py:409
+msgid "Latitude"
+msgstr "Latitud"
+
+#: moon.py:411
+msgid "Longitude"
+msgstr "Longitud"
+
+#: moon.py:522
+msgid "west"
+msgstr "oeste"
+
+#: moon.py:524
+msgid "east"
+msgstr "este"
+
+#: moon.py:527
+msgid "Sunset"
+msgstr "Se pone"
+
+#: moon.py:529
+msgid "Sunrise"
+msgstr "Sale"
+
+#: moon.py:545 moon.py:561
+msgid "New Moon"
+msgstr "Luna Nueva"
+
+#: moon.py:547
+msgid "Waxing Crescent"
+msgstr "Luna Nueva Visible"
+
+#: moon.py:549
+msgid "First Quarter"
+msgstr "Cuarto Creciente"
+
+#: moon.py:551
+msgid "Waxing Gibbous"
+msgstr "Luna Gibada Creciente"
+
+#: moon.py:553
+msgid "Full Moon"
+msgstr "Luna Llena"
+
+#: moon.py:555
+msgid "Waning Gibbous"
+msgstr "Luna Gibada Menguante"
+
+#: moon.py:557
+msgid "Last Quarter"
+msgstr "Cuarto Menguante"
+
+#: moon.py:559
+msgid "Waning Crescent"
+msgstr "Luna Menguante"
