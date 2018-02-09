@@ -28,20 +28,22 @@ Basic activity displaying Luna phase and related information. Calculations are
 based on an internal look-up table generated from a public NASA source. No
 network connection is needed.
 """
+import cairo
+import math
+import time
+import os
 
 from gi.repository import GObject
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import Gtk
+
 from sugar3.activity import activity
 from sugar3.graphics.toggletoolbutton import ToggleToolButton
 from sugar3.graphics.toolbutton import ToolButton
 from sugar3 import profile
 from sugar3.datastore import datastore
 from gettext import gettext as _
-import math
-import time
-import os
 
 try:
     import json
@@ -155,11 +157,16 @@ class MoonActivity(activity.Activity):
             rgba.parse(colour)
             return rgba.to_color()
 
-        self.black_alloc_color = cp('black')
-        self.white_alloc_color = cp('white')
-        self.blue_green_mask_alloc_color = cp('#F00')
-        self.red_alloc_color = cp('#F20')
-        self.blue_alloc_color = cp('#04F')
+        def to_string(colour):
+            rgba = Gdk.RGBA()
+            rgba.parse(colour)
+            return rgba.to_string()
+
+        self.black_alloc_color, self.black = cp('black'), to_string('black')
+        self.white_alloc_color, self.white = cp('white'), to_string('white')
+        self.blue_green_mask_alloc_color, self.bg = cp('#F00'), to_string('#F00')
+        self.red_alloc_color, self.red = cp('#F20'), to_string('#F20')
+        self.blue_alloc_color, self.blue = cp('#04F'), to_string('#04F')
         self.moon_stamp = GdkPixbuf.Pixbuf.new_from_file("moon.jpg")
         self.image_size_cache = -1
 
@@ -332,57 +339,66 @@ class MoonActivity(activity.Activity):
     def update_moon_image_view(self):
         """Update Moon image view using last cached Moon data.
         """
-        pass
-        self.image_pixmap = Gdk.pixmap_new(self.window, IMAGE_SIZE, IMAGE_SIZE)
-        self.gc = self.image_pixmap.new_gc(foreground=self.black_alloc_color)
-        self.image.set_from_pixmap(self.image_pixmap, None)
+        surface = cairo.ImageSurface(
+            cairo.FORMAT_ARGB32, Gdk.Screen.width(), Gdk.Screen.height())
+        self.context = cairo.Context(surface)
+        self.context.fill()
+        #self.image_pixmap = Gdk.Pixmap.new(self.window, IMAGE_SIZE, IMAGE_SIZE)
+        self.gc = self.context.set_source_rgb(self.black)
+        #self.cr.set_source_window(self.cr, Gdk.Screen.get_default, 1, 1)
 
         # Erase last Moon rendering
-        self.image_pixmap.draw_rectangle(self.gc, True, 0, 0, IMAGE_SIZE, IMAGE_SIZE)
+        self.context.rectangle(0, 0, IMAGE_SIZE, IMAGE_SIZE)
 
         # Create a 1bit shadow mask
-        mask_pixmap = Gdk.Pixmap(None, IMAGE_SIZE, IMAGE_SIZE, depth=1)
-        kgc = mask_pixmap.new_gc(foreground=self.black_alloc_color)
-        wgc = mask_pixmap.new_gc(foreground=self.white_alloc_color)
-        mask_pixmap.draw_rectangle(kgc, True, 0, 0, IMAGE_SIZE, IMAGE_SIZE)
+        #mask_pixmap = Gdk.Pixmap(None, IMAGE_SIZE, IMAGE_SIZE, depth=1)
+        kgc = self.context.set_source_rgb(self.black)
+        wgc = self.context.set_source_rgb(self.white)
+        self.context.rectangle(0, 0, IMAGE_SIZE, IMAGE_SIZE)
         if self.data_model.phase_of_moon <= .25:
             # New Moon to First Quarter
             phase_shadow_adjust = self.data_model.phase_of_moon - abs(math.sin(self.data_model.phase_of_moon * math.pi * 4) / 18.0)
             arc_scale = int(IMAGE_SIZE * (1 - (phase_shadow_adjust * 4)))
-            mask_pixmap.draw_rectangle(wgc, True, HALF_SIZE + 1, 0, HALF_SIZE, IMAGE_SIZE - 1)
-            mask_pixmap.draw_arc(kgc, True, HALF_SIZE - int(arc_scale / 2), 0, arc_scale, IMAGE_SIZE, 17280, 11520)
+            self.context.rectangle(HALF_SIZE + 1, 0, HALF_SIZE,
+                                   IMAGE_SIZE - 1)
+            self.context.arc(HALF_SIZE - int(arc_scale / 2), 0,
+                             arc_scale + IMAGE_SIZE, 17280, 11520)
         elif self.data_model.phase_of_moon <= .5:
             # First Quarter to Full Moon
             phase_shadow_adjust = self.data_model.phase_of_moon + abs(math.sin(self.data_model.phase_of_moon * math.pi * 4) / 18.0)
             arc_scale = int(IMAGE_SIZE * ((phase_shadow_adjust - .25) * 4))
-            mask_pixmap.draw_rectangle(wgc, True, HALF_SIZE, 0, HALF_SIZE, IMAGE_SIZE)
-            mask_pixmap.draw_arc(wgc, True, HALF_SIZE - int(arc_scale / 2), 0, arc_scale, IMAGE_SIZE, 5760, 11520)
+            self.context.rectangle(HALF_SIZE, 0, HALF_SIZE, IMAGE_SIZE)
+            self.context.arc(HALF_SIZE - int(arc_scale / 2), 0,
+                             arc_scale + IMAGE_SIZE, 5760, 11520)
         elif self.data_model.phase_of_moon <= .75:
             # Full Moon to Last Quarter
             phase_shadow_adjust = self.data_model.phase_of_moon - abs(math.sin(self.data_model.phase_of_moon * math.pi * 4) / 18.0)
             arc_scale = int(IMAGE_SIZE * (1 - ((phase_shadow_adjust - .5) * 4)))
-            mask_pixmap.draw_rectangle(wgc, True, 0, 0, HALF_SIZE + 1, IMAGE_SIZE)
-            mask_pixmap.draw_arc(wgc, True, HALF_SIZE - int(arc_scale / 2), 0, arc_scale, IMAGE_SIZE, 17280, 11520)
+            self.context.rectangle(0, 0, HALF_SIZE + 1, IMAGE_SIZE)
+            self.context.arc(HALF_SIZE - int(arc_scale / 2), 0,
+                             arc_scale + IMAGE_SIZE, 17280, 11520)
         else:
             # Last Quarter to New Moon
             phase_shadow_adjust = self.data_model.phase_of_moon + abs(math.sin(self.data_model.phase_of_moon * math.pi * 4) / 18.0)
             arc_scale = int(IMAGE_SIZE * ((phase_shadow_adjust - .75) * 4))
-            mask_pixmap.draw_rectangle(wgc, True, 0, 0, HALF_SIZE, IMAGE_SIZE)
-            mask_pixmap.draw_arc(kgc, True, HALF_SIZE - int(arc_scale / 2), 0, arc_scale, IMAGE_SIZE, 5760, 11520)
-        maskgc = self.image_pixmap.new_gc(clip_mask=mask_pixmap)
+            self.context.rectangle(0, 0, HALF_SIZE, IMAGE_SIZE)
+            self.context.arc(HALF_SIZE - int(arc_scale / 2), 0,
+                             arc_scale + IMAGE_SIZE, 5760, 11520)
+        maskgc = self.context.clip()
 
         # Modified image based on public domain photo by John MacCooey
         moon_pixbuf = self.moon_stamp.scale_simple(IMAGE_SIZE, IMAGE_SIZE,
                 GdkPixbuf.InterpType.BILINEAR)
 
         # Composite bright Moon image and semi-transparant Moon for shadow detail
-        dark_pixbuf = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8, IMAGE_SIZE, IMAGE_SIZE)
+        dark_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB,
+            True, 8, IMAGE_SIZE, IMAGE_SIZE)
         dark_pixbuf.fill(0x00000000)
         if (self.data_model.next_lunar_eclipse_sec == -1 and self.data_model.last_lunar_eclipse_sec > 7200) or (self.data_model.next_lunar_eclipse_sec > 7200 and self.data_model.last_lunar_eclipse_sec == -1) or min(self.data_model.next_lunar_eclipse_sec, self.data_model.last_lunar_eclipse_sec) > 7200:
             # Normal Moon phase render
             moon_pixbuf.composite(dark_pixbuf, 0, 0, IMAGE_SIZE, IMAGE_SIZE, 0, 0, 1, 1, GdkPixbuf.InterpType.BILINEAR, 127)
-            self.image_pixmap.draw_pixbuf(self.gc, dark_pixbuf, 0, 0, 0, 0)
-            self.image_pixmap.draw_pixbuf(maskgc, moon_pixbuf, 0, 0, 0, 0)
+            Gdk.cairo_set_source_pixbuf(self.gc, dark_pixbuf, 0, 0)
+            Gdk.cairo_set_source_pixbuf(maskgc, moon_pixbuf, 0, 0)
 
         else:
             # Reddening eclipse effect, 2hrs (7200sec) before and after (by masking out green & blue)
@@ -395,22 +411,24 @@ class MoonActivity(activity.Activity):
             moon_pixbuf.composite(dark_pixbuf, 0, 0, IMAGE_SIZE, IMAGE_SIZE,
                                   0, 0, 1, 1, GdkPixbuf.InterpType.BILINEAR,
                                   int(196 - eclipse_alpha / 2))
-            self.image_pixmap.draw_pixbuf(self.gc, dark_pixbuf, 0, 0, 0, 0)
+            Gdk.cairo_set_source_pixbuf(self.gc, dark_pixbuf, 0, 0)
             del dark_pixbuf
-            dark_pixbuf = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8, IMAGE_SIZE, IMAGE_SIZE)
+            dark_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB,
+                True, 8, IMAGE_SIZE, IMAGE_SIZE)
             moon_pixbuf.composite(dark_pixbuf, 0, 0, IMAGE_SIZE, IMAGE_SIZE,
                                   0, 0, 1, 1, GdkPixbuf.InterpType.BILINEAR,
                                   int(eclipse_alpha))
-            rgc = self.image_pixmap.new_gc(foreground=self.blue_green_mask_alloc_color, function=Gdk.AND)
-            self.image_pixmap.draw_rectangle(rgc, True, 0, 0, IMAGE_SIZE, IMAGE_SIZE)
-            self.image_pixmap.draw_pixbuf(self.gc, dark_pixbuf, 0, 0, 0, 0)
+            rgc = self.context.set_source_rgb(self.bg)
+            self.context.rectangle(0, 0, IMAGE_SIZE, IMAGE_SIZE)
+            Gdk.cairo_set_source_pixbuf(self.gc, dark_pixbuf, 0, 0)
 
         if self.hemisphere_view == 'south':
             # Rotate final image for a view from north or south hemisphere
-            rot_pixbuf = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, False, 8, IMAGE_SIZE, IMAGE_SIZE)
+            rot_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB,
+                                              False, 8, IMAGE_SIZE, IMAGE_SIZE)
             rot_pixbuf.get_from_drawable(self.image_pixmap, self.image_pixmap.get_colormap(), 0, 0, 0, 0, -1, -1)
             rot_pixbuf = rot_pixbuf.rotate_simple(Gdk.PIXBUF_ROTATE_UPSIDEDOWN)
-            self.image_pixmap.draw_pixbuf(self.gc, rot_pixbuf, 0, 0, 0, 0)
+            Gdk.cairo_set_source_pixbuf(self.gc, rot_pixbuf, 0, 0)
             if self.show_grid:
                 # Draw grid rotated for south hemi
                 self.draw_grid(_("SNWE"))
@@ -429,64 +447,75 @@ class MoonActivity(activity.Activity):
     def draw_grid(self, compass_text):
         """Draw Selenographic grid line data.
         """
-        rgc = self.image_pixmap.new_gc(foreground=self.red_alloc_color)
-        bgc = self.image_pixmap.new_gc(foreground=self.blue_alloc_color)
-        wgc = self.image_pixmap.new_gc(foreground=self.white_alloc_color)
+        rgc = self.context.set_source_rgb(self.red)
+        bgc = self.context.set_source_rgb(self.blue)
+        wgc = self.context.set_source_rgb(self.white)
         pango_layout = self.image.create_pango_layout("")
         pango_layout.set_text("0°")
-        self.image_pixmap.draw_rectangle(bgc, True, HALF_SIZE + 2, HALF_SIZE, 24, 22)
-        self.image_pixmap.draw_layout(wgc, HALF_SIZE + 2, HALF_SIZE, pango_layout)
+        self.context.rectangle(HALF_SIZE + 2, HALF_SIZE, 24, 22)
+        #self.image_pixmap.draw_layout(wgc, HALF_SIZE + 2, HALF_SIZE, pango_layout)
         pango_layout.set_text("30°")
-        self.image_pixmap.draw_rectangle(bgc, True, HALF_SIZE + 2, int(HALF_SIZE * 0.5), 36, 22)
-        self.image_pixmap.draw_rectangle(bgc, True, HALF_SIZE + 2, int(HALF_SIZE * 1.5), 36, 22)
-        self.image_pixmap.draw_layout(wgc, HALF_SIZE + 2, int(HALF_SIZE * 0.5), pango_layout)
-        self.image_pixmap.draw_layout(wgc, HALF_SIZE + 2, int(HALF_SIZE * 1.5), pango_layout)
+        self.context.rectangle(HALF_SIZE + 2, int(HALF_SIZE * 0.5), 36, 22)
+        self.context.rectangle(HALF_SIZE + 2, int(HALF_SIZE * 1.5), 36, 22)
+        #self.image_pixmap.draw_layout(wgc, HALF_SIZE + 2, int(HALF_SIZE * 0.5), pango_layout)
+        #self.image_pixmap.draw_layout(wgc, HALF_SIZE + 2, int(HALF_SIZE * 1.5), pango_layout)
         pango_layout.set_text("60°")
-        self.image_pixmap.draw_rectangle(bgc, True, HALF_SIZE + 2, int(HALF_SIZE * 0.15), 36, 22)
-        self.image_pixmap.draw_rectangle(bgc, True, HALF_SIZE + 2, int(HALF_SIZE * 1.85), 36, 22)
-        self.image_pixmap.draw_layout(wgc, HALF_SIZE + 2, int(HALF_SIZE * 0.15), pango_layout)
-        self.image_pixmap.draw_layout(wgc, HALF_SIZE + 2, int(HALF_SIZE * 1.85), pango_layout)
+        self.context.rectangle(HALF_SIZE + 2, int(HALF_SIZE * 0.15), 36, 22)
+        self.context.rectangle(HALF_SIZE + 2, int(HALF_SIZE * 1.85), 36, 22)
+        #self.image_pixmap.draw_layout(wgc, HALF_SIZE + 2, int(HALF_SIZE * 0.15), pango_layout)
+        #self.image_pixmap.draw_layout(wgc, HALF_SIZE + 2, int(HALF_SIZE * 1.85), pango_layout)
         pango_layout.set_text("30°")
-        self.image_pixmap.draw_rectangle(rgc, True, int(HALF_SIZE * 0.48) + 2, HALF_SIZE, 36, 22)
-        self.image_pixmap.draw_rectangle(rgc, True, int(HALF_SIZE * 1.52) + 2, HALF_SIZE, 36, 22)
-        self.image_pixmap.draw_layout(wgc, int(HALF_SIZE * 0.48) + 2, HALF_SIZE, pango_layout)
-        self.image_pixmap.draw_layout(wgc, int(HALF_SIZE * 1.52) + 2, HALF_SIZE, pango_layout)
+        self.context.rectangle(int(HALF_SIZE * 0.48) + 2, HALF_SIZE, 36, 22)
+        self.context.rectangle(int(HALF_SIZE * 1.52) + 2, HALF_SIZE, 36, 22)
+        #self.image_pixmap.draw_layout(wgc, int(HALF_SIZE * 0.48) + 2, HALF_SIZE, pango_layout)
+        #self.image_pixmap.draw_layout(wgc, int(HALF_SIZE * 1.52) + 2, HALF_SIZE, pango_layout)
         pango_layout.set_text("60°")
-        self.image_pixmap.draw_rectangle(rgc, True, int(HALF_SIZE * 0.15) + 2, HALF_SIZE, 36, 22)
-        self.image_pixmap.draw_rectangle(rgc, True, int(HALF_SIZE * 1.85) + 2, HALF_SIZE, 36, 22)
-        self.image_pixmap.draw_layout(wgc, int(HALF_SIZE * 0.15) + 2, HALF_SIZE, pango_layout)
-        self.image_pixmap.draw_layout(wgc, int(HALF_SIZE * 1.85) + 2, HALF_SIZE, pango_layout)
+        self.context.rectangle(int(HALF_SIZE * 0.15) + 2, HALF_SIZE, 36, 22)
+        self.context.rectangle(int(HALF_SIZE * 1.85) + 2, HALF_SIZE, 36, 22)
+        #self.image_pixmap.draw_layout(wgc, int(HALF_SIZE * 0.15) + 2, HALF_SIZE, pango_layout)
+        #self.image_pixmap.draw_layout(wgc, int(HALF_SIZE * 1.85) + 2, HALF_SIZE, pango_layout)
         for i in (-1, 0, 1):
-            self.image_pixmap.draw_line(rgc, HALF_SIZE + i, 0, HALF_SIZE + i, IMAGE_SIZE)
-            self.image_pixmap.draw_arc(rgc, False, int(HALF_SIZE * 0.15) + i, 0, IMAGE_SIZE - int(IMAGE_SIZE * 0.15), IMAGE_SIZE, 0, 360*64)
-            self.image_pixmap.draw_arc(rgc, False, int(HALF_SIZE * 0.48) + i, 0, IMAGE_SIZE - int(IMAGE_SIZE * 0.48) , IMAGE_SIZE, 0, 360*64)
+            radius1 = IMAGE_SIZE - int(IMAGE_SIZE * 0.15) + IMAGE_SIZE
+            radius2 = IMAGE_SIZE - int(IMAGE_SIZE * 0.48) + IMAGE_SIZE
+            self.context.line_to(HALF_SIZE + i, IMAGE_SIZE)
+            self.context.arc(int(HALF_SIZE * 0.15) + i, 0,
+                             radius1, 0, 360*64)
+            self.context.arc(int(HALF_SIZE * 0.48) + i, 0,
+                             radius2, 0, 360*64)
         for i in (-1, 0, 1):
-            self.image_pixmap.draw_line(bgc, 0, HALF_SIZE + i, IMAGE_SIZE, HALF_SIZE + i)
-            self.image_pixmap.draw_line(bgc, int(HALF_SIZE * 0.15), int(HALF_SIZE * 0.5) + i, IMAGE_SIZE - int(HALF_SIZE * 0.15), int(HALF_SIZE * 0.5) + i)
-            self.image_pixmap.draw_line(bgc, int(HALF_SIZE * 0.15), int(HALF_SIZE * 1.5) + i, IMAGE_SIZE - int(HALF_SIZE * 0.15), int(HALF_SIZE * 1.5) + i)
-            self.image_pixmap.draw_line(bgc, int(HALF_SIZE * 0.5), int(HALF_SIZE * 0.15) + i, IMAGE_SIZE - int(HALF_SIZE * 0.5), int(HALF_SIZE * 0.15) + i)
-            self.image_pixmap.draw_line(bgc, int(HALF_SIZE * 0.5), int(HALF_SIZE * 1.85) + i, IMAGE_SIZE - int(HALF_SIZE * 0.5), int(HALF_SIZE * 1.85) + i)
+            x = ((IMAGE_SIZE - int(HALF_SIZE * 0.15))-
+                 (IMAGE_SIZE - int(HALF_SIZE * 0.15)))
+            y1 = (int(HALF_SIZE * 0.5) + i) - (int(HALF_SIZE * 0.5) + i)
+            y2 = (int(HALF_SIZE * 1.5) + i) - (int(HALF_SIZE * 0.5) + i)
+            x2 = (IMAGE_SIZE - int(HALF_SIZE * 0.5)) - int(HALF_SIZE * 0.5)
+            y3 = (int(HALF_SIZE * 0.15) + i) - (int(HALF_SIZE * 0.15) + i)
+            y4 = (int(HALF_SIZE * 1.85) + i) - (int(HALF_SIZE * 1.85) + i)
+            self.context.line_to((IMAGE_SIZE - 0), HALF_SIZE + i)
+            self.context.line_to(x, y1)
+            self.context.line_to(x, y2)
+            self.context.line_to(x2, y3)
+            self.context.line_to(x2, y4)
 
         # Key text
         pango_layout.set_text(_("Latitude"))
-        self.image_pixmap.draw_layout(bgc, 15, IMAGE_SIZE - 48 - 15, pango_layout)
+        #self.image_pixmap.draw_layout(bgc, 15, IMAGE_SIZE - 48 - 15, pango_layout)
         pango_layout.set_text(_("Longitude"))
-        self.image_pixmap.draw_layout(rgc, 15, IMAGE_SIZE - 24 - 15, pango_layout)
+        #self.image_pixmap.draw_layout(rgc, 15, IMAGE_SIZE - 24 - 15, pango_layout)
 
         # Compass
         # TODO: fix string index to support multi-byte texts
         for i in (-1, 0, 1):
-            self.image_pixmap.draw_line(rgc, 22 + 15, 48 + 15 + i, 68 + 15, 48 + 15 + i)
+            self.context.line_to((68 + 15)-(22 + 15)),((48 +15 + i)-(48 + 15 + i))
         for i in (-1, 0, 1):
-            self.image_pixmap.draw_line(bgc, 45 + 15 + i, 24 + 15, 45 + 15 + i, 68 + 15)
+            self.context.line_to((45 + 15 + i)-(45 + 15 + i), (68 + 15)-(24 + 15))
         pango_layout.set_text(compass_text[0])
-        self.image_pixmap.draw_layout(bgc, 38 + 15, 15, pango_layout)
+        #self.image_pixmap.draw_layout(bgc, 38 + 15, 15, pango_layout)
         pango_layout.set_text(compass_text[1])
-        self.image_pixmap.draw_layout(bgc, 38 + 15, 72 + 15, pango_layout)
+        #self.image_pixmap.draw_layout(bgc, 38 + 15, 72 + 15, pango_layout)
         pango_layout.set_text(compass_text[2])
-        self.image_pixmap.draw_layout(rgc, 72 + 15, 36 + 15, pango_layout)
+        #self.image_pixmap.draw_layout(rgc, 72 + 15, 36 + 15, pango_layout)
         pango_layout.set_text(compass_text[3])
-        self.image_pixmap.draw_layout(rgc, 15, 36 + 15, pango_layout)
+        #self.image_pixmap.draw_layout(rgc, 15, 36 + 15, pango_layout)
 
     def _moon_size_allocate_cb(self, widget, allocation):
         global IMAGE_SIZE, HALF_SIZE
@@ -500,11 +529,11 @@ class MoonActivity(activity.Activity):
 
     def save_image(self, widget):
         """
-        Save the curren phase to image and show alert
+        Save the current phase to image and show alert
         """
 
         w, h = self.get_size()
-        pixbuf = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, False, 8,
+        pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, False, 8,
                     int(w / 1.70), h - 55)
 
         shot = pixbuf.get_from_drawable(self.window, self.get_colormap(),
