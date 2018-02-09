@@ -162,13 +162,19 @@ class MoonActivity(activity.Activity):
             rgba.parse(colour)
             return rgba.to_string()
 
-        self.black_alloc_color, self.black = cp('black'), to_string('black')
-        self.white_alloc_color, self.white = cp('white'), to_string('white')
-        self.blue_green_mask_alloc_color, self.bg = cp('#F00'), to_string('#F00')
-        self.red_alloc_color, self.red = cp('#F20'), to_string('#F20')
-        self.blue_alloc_color, self.blue = cp('#04F'), to_string('#04F')
+        self.black_alloc_color = cp('black')
+        self.white_alloc_color = cp('white')
+        self.blue_green_mask_alloc_color = cp('#F00')
+        self.red_alloc_color = cp('#F20')
+        self.blue_alloc_color = cp('#04F')
         self.moon_stamp = GdkPixbuf.Pixbuf.new_from_file("moon.jpg")
         self.image_size_cache = -1
+
+        self.black = to_string('black')
+        self.white = to_string('black')
+        self.bg = to_string('#F00')
+        self.red = to_string('#F20')
+        self.blue = to_string('#04F')
 
         # Build main layout manually for the first pass
         self.build_main_layout_cb()
@@ -345,7 +351,7 @@ class MoonActivity(activity.Activity):
         self.context.fill()
         #self.image_pixmap = Gdk.Pixmap.new(self.window, IMAGE_SIZE, IMAGE_SIZE)
         self.gc = self.context.set_source_rgb(self.black)
-        #self.cr.set_source_window(self.cr, Gdk.Screen.get_default, 1, 1)
+        
 
         # Erase last Moon rendering
         self.context.rectangle(0, 0, IMAGE_SIZE, IMAGE_SIZE)
