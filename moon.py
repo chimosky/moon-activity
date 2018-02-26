@@ -37,6 +37,7 @@ from gi.repository import GObject
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import Gtk
+from gi.repository import PangoCairo
 
 from sugar3.activity import activity
 from sugar3.graphics.toggletoolbutton import ToggleToolButton
@@ -157,11 +158,6 @@ class MoonActivity(activity.Activity):
             rgba.parse(colour)
             return rgba.to_color()
 
-        def rgba_to_string(colour):
-            rgba = Gdk.RGBA()
-            rgba.parse(colour)
-            return rgba.to_string()
-
         self.black_alloc_color = cp('black')
         self.white_alloc_color = cp('white')
         self.blue_green_mask_alloc_color = cp('#F00')
@@ -170,12 +166,6 @@ class MoonActivity(activity.Activity):
         self.moon_stamp = GdkPixbuf.Pixbuf.new_from_file("moon.jpg")
         self.image_size_cache = -1
 
-        self.black = rgba_to_string('black')
-        self.white = rgba_to_string('black')
-        self.bg = rgba_to_string('#F00')
-        self.red = rgba_to_string('#F20')
-        self.blue = rgba_to_string('#04F')
-
         # Build main layout manually for the first pass
         self.build_main_layout_cb()
 
@@ -183,13 +173,13 @@ class MoonActivity(activity.Activity):
         Gdk.Screen.get_default().connect('size-changed', self.build_main_layout_cb)
 
         # testing restarter
-        ct = os.stat('go').st_ctime
-        def restarter():
-            if os.stat('go').st_ctime != ct:
-                self.close()
-                return False
-            return True
-        GObject.timeout_add(233, restarter)
+        #ct = os.stat('go').st_ctime
+        #def restarter():
+        #    if os.stat('go').st_ctime != ct:
+        #        self.close()
+        #        return False
+        #    return True
+        #GObject.timeout_add(233, restarter)
 
     def build_main_layout_cb(self, widget=None, data=None):
         """Create main layout respecting landscape or portrait orientation.
@@ -274,7 +264,7 @@ class MoonActivity(activity.Activity):
     def read_file(self, file_path):
         """Read state from datastore.
         """
-        self.read_and_parse_prefs(file_path)
+	self.read_and_parse_prefs(file_path)
 
     def write_file(self, file_path):
         """Write state to journal datastore and to persistent file system.
@@ -348,18 +338,29 @@ class MoonActivity(activity.Activity):
         surface = cairo.ImageSurface(
             cairo.FORMAT_ARGB32, Gdk.Screen.width(), Gdk.Screen.height())
         self.context = cairo.Context(surface)
-        self.context.fill()
-        #self.image_pixmap = Gdk.Pixmap.new(self.window, IMAGE_SIZE, IMAGE_SIZE)
-        self.gc = self.context.set_source_rgb(self.black)
+        #self.context.fill()
+        self.gc = self.context.set_source_rgb(
+            self.black_alloc_color.red,
+            self.black_alloc_color.green,
+            self.black_alloc_color.blue
+            )
         
+        self.context.save()
 
         # Erase last Moon rendering
         self.context.rectangle(0, 0, IMAGE_SIZE, IMAGE_SIZE)
 
         # Create a 1bit shadow mask
-        #mask_pixmap = Gdk.Pixmap(None, IMAGE_SIZE, IMAGE_SIZE, depth=1)
-        kgc = self.context.set_source_rgb(self.black)
-        wgc = self.context.set_source_rgb(self.white)
+        kgc = self.context.set_source_rgb(
+            self.black_alloc_color.red, 
+            self.black_alloc_color.green,
+            self.black_alloc_color.blue
+            )
+        wgc = self.context.set_source_rgb(
+            self.white_alloc_color.red,
+            self.white_alloc_color.green,
+            self.white_alloc_color.blue
+            )
         self.context.rectangle(0, 0, IMAGE_SIZE, IMAGE_SIZE)
         if self.data_model.phase_of_moon <= .25:
             # New Moon to First Quarter
@@ -403,8 +404,14 @@ class MoonActivity(activity.Activity):
         if (self.data_model.next_lunar_eclipse_sec == -1 and self.data_model.last_lunar_eclipse_sec > 7200) or (self.data_model.next_lunar_eclipse_sec > 7200 and self.data_model.last_lunar_eclipse_sec == -1) or min(self.data_model.next_lunar_eclipse_sec, self.data_model.last_lunar_eclipse_sec) > 7200:
             # Normal Moon phase render
             moon_pixbuf.composite(dark_pixbuf, 0, 0, IMAGE_SIZE, IMAGE_SIZE, 0, 0, 1, 1, GdkPixbuf.InterpType.BILINEAR, 127)
-            Gdk.cairo_set_source_pixbuf(self.gc, dark_pixbuf, 0, 0)
-            Gdk.cairo_set_source_pixbuf(maskgc, moon_pixbuf, 0, 0)
+            self.context.set_source_rgb(
+                self.black_alloc_color.red,
+                self.black_alloc_color.green,
+                self.black_alloc_color.blue
+            )
+            self.context.clip()
+            Gdk.cairo_set_source_pixbuf(self.context, dark_pixbuf, 0, 0)
+            Gdk.cairo_set_source_pixbuf(self.context, moon_pixbuf, 0, 0)
 
         else:
             # Reddening eclipse effect, 2hrs (7200sec) before and after (by masking out green & blue)
@@ -417,31 +424,51 @@ class MoonActivity(activity.Activity):
             moon_pixbuf.composite(dark_pixbuf, 0, 0, IMAGE_SIZE, IMAGE_SIZE,
                                   0, 0, 1, 1, GdkPixbuf.InterpType.BILINEAR,
                                   int(196 - eclipse_alpha / 2))
-            Gdk.cairo_set_source_pixbuf(self.gc, dark_pixbuf, 0, 0)
+            self.context.set_source_rgb(
+                self.black_alloc_color.red,
+                self.black_alloc_color.green, 
+                self.black_alloc_color.blue,
+            )
+            Gdk.cairo_set_source_pixbuf(self.context, dark_pixbuf, 0, 0)
             del dark_pixbuf
             dark_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB,
                 True, 8, IMAGE_SIZE, IMAGE_SIZE)
             moon_pixbuf.composite(dark_pixbuf, 0, 0, IMAGE_SIZE, IMAGE_SIZE,
                                   0, 0, 1, 1, GdkPixbuf.InterpType.BILINEAR,
                                   int(eclipse_alpha))
-            rgc = self.context.set_source_rgb(self.bg)
+            rgc = self.context.set_source_rgb(
+                self.blue_green_mask_alloc_color.red,
+                self.blue_green_mask_alloc_color.green,
+                self.blue_green_mask_alloc_color.blue
+                )
             self.context.rectangle(0, 0, IMAGE_SIZE, IMAGE_SIZE)
-            Gdk.cairo_set_source_pixbuf(self.gc, dark_pixbuf, 0, 0)
+            self.context.set_source_rgb(
+                self.blue_green_mask_alloc_color.red,
+                self.blue_green_mask_alloc_color.green,
+                self.blue_green_mask_alloc_color.blue
+            )
+            Gdk.cairo_set_source_pixbuf(self.context, dark_pixbuf, 0, 0)
 
         if self.hemisphere_view == 'south':
             # Rotate final image for a view from north or south hemisphere
             rot_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB,
                                               False, 8, IMAGE_SIZE, IMAGE_SIZE)
-            rot_pixbuf.get_from_drawable(self.image_pixmap, self.image_pixmap.get_colormap(), 0, 0, 0, 0, -1, -1)
-            rot_pixbuf = rot_pixbuf.rotate_simple(Gdk.PIXBUF_ROTATE_UPSIDEDOWN)
-            Gdk.cairo_set_source_pixbuf(self.gc, rot_pixbuf, 0, 0)
+            #rot_pixbuf.get_from_drawable(self.image_pixmap, self.image_pixmap.get_colormap(), 0, 0, 0, 0, -1, -1)
+            rot_pixbuf = rot_pixbuf.rotate_simple(GdkPixbuf.PixbufRotation.UPSIDEDOWN)
+            self.context.set_source_rgb(
+                self.black_alloc_color.red,
+                self.black_alloc_color.green,
+                self.black_alloc_color.blue
+            )
+            Gdk.cairo_set_source_pixbuf(self.context, rot_pixbuf, 0, 0)
             if self.show_grid:
                 # Draw grid rotated for south hemi
                 self.draw_grid(_("SNWE"))
         elif self.show_grid:
             # Draw grid for north hemi
             self.draw_grid(_("NSEW"))
-
+        self.context.restore()
+     
         self.image.queue_draw()
 
         # Update the Moon image in another 5min
@@ -453,33 +480,51 @@ class MoonActivity(activity.Activity):
     def draw_grid(self, compass_text):
         """Draw Selenographic grid line data.
         """
-        rgc = self.context.set_source_rgb(self.red)
-        bgc = self.context.set_source_rgb(self.blue)
-        wgc = self.context.set_source_rgb(self.white)
-        pango_layout = self.image.create_pango_layout("")
-        pango_layout.set_text("0°")
+        rgc = self.context.set_source_rgb(
+            self.red_alloc_color.red,
+            self.red_alloc_color.green,
+            self.red_alloc_color.blue
+            )
+        bgc = self.context.set_source_rgb(
+            self.blue_alloc_color.red,
+            self.blue_alloc_color.green,
+            self.blue_alloc_color.blue
+            )
+        wgc = self.context.set_source_rgb(
+            self.white_alloc_color.red,
+            self.white_alloc_color.green,
+            self.white_alloc_color.blue
+            )
+        self.context.set_source_rgb(
+            self.white_alloc_color.red,
+            self.white_alloc_color.green,
+            self.white_alloc_color.blue
+        )
+        pango_layout = PangoCairo.create_layout(self.context)
+        pango_layout.set_text(_("0°"))
         self.context.rectangle(HALF_SIZE + 2, HALF_SIZE, 24, 22)
-        #self.image_pixmap.draw_layout(wgc, HALF_SIZE + 2, HALF_SIZE, pango_layout)
-        pango_layout.set_text("30°")
+        PangoCairo.update_layout(self.context, pango_layout) 
+        PangoCairo.show_layout(self.context, pango_layout)
+        pango_layout.set_text(_("30°"))
         self.context.rectangle(HALF_SIZE + 2, int(HALF_SIZE * 0.5), 36, 22)
         self.context.rectangle(HALF_SIZE + 2, int(HALF_SIZE * 1.5), 36, 22)
-        #self.image_pixmap.draw_layout(wgc, HALF_SIZE + 2, int(HALF_SIZE * 0.5), pango_layout)
-        #self.image_pixmap.draw_layout(wgc, HALF_SIZE + 2, int(HALF_SIZE * 1.5), pango_layout)
-        pango_layout.set_text("60°")
+        PangoCairo.update_layout(self.context, pango_layout)
+        PangoCairo.show_layout(self.context, pango_layout)
+        pango_layout.set_text(_("60°"))
         self.context.rectangle(HALF_SIZE + 2, int(HALF_SIZE * 0.15), 36, 22)
         self.context.rectangle(HALF_SIZE + 2, int(HALF_SIZE * 1.85), 36, 22)
-        #self.image_pixmap.draw_layout(wgc, HALF_SIZE + 2, int(HALF_SIZE * 0.15), pango_layout)
-        #self.image_pixmap.draw_layout(wgc, HALF_SIZE + 2, int(HALF_SIZE * 1.85), pango_layout)
-        pango_layout.set_text("30°")
+        PangoCairo.update_layout(self.context, pango_layout)
+        PangoCairo.show_layout(self.context, pango_layout)
+        pango_layout.set_text(_("30°"))
         self.context.rectangle(int(HALF_SIZE * 0.48) + 2, HALF_SIZE, 36, 22)
         self.context.rectangle(int(HALF_SIZE * 1.52) + 2, HALF_SIZE, 36, 22)
-        #self.image_pixmap.draw_layout(wgc, int(HALF_SIZE * 0.48) + 2, HALF_SIZE, pango_layout)
-        #self.image_pixmap.draw_layout(wgc, int(HALF_SIZE * 1.52) + 2, HALF_SIZE, pango_layout)
-        pango_layout.set_text("60°")
+        PangoCairo.update_layout(self.context, pango_layout)
+        PangoCairo.show_layout(self.context, pango_layout)
+        pango_layout.set_text(_("60°"))
         self.context.rectangle(int(HALF_SIZE * 0.15) + 2, HALF_SIZE, 36, 22)
         self.context.rectangle(int(HALF_SIZE * 1.85) + 2, HALF_SIZE, 36, 22)
-        #self.image_pixmap.draw_layout(wgc, int(HALF_SIZE * 0.15) + 2, HALF_SIZE, pango_layout)
-        #self.image_pixmap.draw_layout(wgc, int(HALF_SIZE * 1.85) + 2, HALF_SIZE, pango_layout)
+        PangoCairo.update_layout(self.context, pango_layout)
+        PangoCairo.show_layout(self.context, pango_layout)
         for i in (-1, 0, 1):
             radius1 = IMAGE_SIZE - int(IMAGE_SIZE * 0.15) + IMAGE_SIZE
             radius2 = IMAGE_SIZE - int(IMAGE_SIZE * 0.48) + IMAGE_SIZE
@@ -503,25 +548,52 @@ class MoonActivity(activity.Activity):
             self.context.line_to(x2, y4)
 
         # Key text
+        self.context.set_source_rgb(
+            self.blue_alloc_color.red,
+            self.blue_alloc_color.green,
+            self.blue_alloc_color.blue
+        )
         pango_layout.set_text(_("Latitude"))
-        #self.image_pixmap.draw_layout(bgc, 15, IMAGE_SIZE - 48 - 15, pango_layout)
+        PangoCairo.update_layout(self.context, pango_layout)
+        PangoCairo.show_layout(self.context, pango_layout)
         pango_layout.set_text(_("Longitude"))
-        #self.image_pixmap.draw_layout(rgc, 15, IMAGE_SIZE - 24 - 15, pango_layout)
+        
+        self.context.set_source_rgb(
+            self.red_alloc_color.red,
+            self.red_alloc_color.green,
+            self.red_alloc_color.blue
+        )
+        PangoCairo.update_layout(self.context, pango_layout)
+        PangoCairo.show_layout(self.context, pango_layout)
 
         # Compass
         # TODO: fix string index to support multi-byte texts
         for i in (-1, 0, 1):
-            self.context.line_to((68 + 15)-(22 + 15)),((48 +15 + i)-(48 + 15 + i))
+            self.context.line_to(((68 + 15)-(22 + 15)),((48 +15 + i)-(48 + 15 + i)))
         for i in (-1, 0, 1):
-            self.context.line_to((45 + 15 + i)-(45 + 15 + i), (68 + 15)-(24 + 15))
-        pango_layout.set_text(compass_text[0])
-        #self.image_pixmap.draw_layout(bgc, 38 + 15, 15, pango_layout)
-        pango_layout.set_text(compass_text[1])
-        #self.image_pixmap.draw_layout(bgc, 38 + 15, 72 + 15, pango_layout)
-        pango_layout.set_text(compass_text[2])
-        #self.image_pixmap.draw_layout(rgc, 72 + 15, 36 + 15, pango_layout)
-        pango_layout.set_text(compass_text[3])
-        #self.image_pixmap.draw_layout(rgc, 15, 36 + 15, pango_layout)
+            self.context.line_to(((45 + 15 + i)-(45 + 15 + i)), ((68 + 15)-(24 + 15)))
+        pango_layout.set_text(_(compass_text[0]))
+        self.context.set_source_rgb(
+            self.blue_alloc_color.red,
+            self.blue_alloc_color.green,
+            self.blue_alloc_color.blue
+        )
+        PangoCairo.update_layout(self.context, pango_layout)
+        PangoCairo.show_layout(self.context, pango_layout)
+        pango_layout.set_text(_(compass_text[1]))
+        PangoCairo.update_layout(self.context, pango_layout)
+        PangoCairo.show_layout(self.context, pango_layout)
+        pango_layout.set_text(_(compass_text[2]))
+        self.context.set_source_rgb(
+            self.red_alloc_color.red,
+            self.red_alloc_color.green,
+            self.red_alloc_color.blue
+        )
+        PangoCairo.update_layout(self.context, pango_layout)
+        PangoCairo.show_layout(self.context, pango_layout)
+        pango_layout.set_text(_(compass_text[3]))
+        PangoCairo.update_layout(self.context, pango_layout)
+        PangoCairo.show_layout(self.context, pango_layout)
 
     def _moon_size_allocate_cb(self, widget, allocation):
         global IMAGE_SIZE, HALF_SIZE
