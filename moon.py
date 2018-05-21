@@ -32,7 +32,11 @@ import cairo
 import math
 import time
 import os
+import gi
 
+gi.require_version('Gtk', '3.0')
+gi.require_version('Gdk', '3.0')
+gi.require_version('PangoCairo', '1.0')
 from gi.repository import GObject
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
@@ -449,7 +453,7 @@ class MoonActivity(activity.Activity):
             # Rotate final image for a view from north or south hemisphere
             rot_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB,
                                               False, 8, IMAGE_SIZE, IMAGE_SIZE)
-            rot_pixbuf.get_from_window(self.context, 0, 0, -1, -1)
+            #rot_pixbuf.get_from_window(self.context, 0, 0, -1, -1)
             rot_pixbuf = rot_pixbuf.rotate_simple(GdkPixbuf.PixbufRotation.UPSIDEDOWN)
             self.context.set_source_rgb(self.gc[0], self.gc[1], self.gc[2])
             Gdk.cairo_set_source_pixbuf(self.context, rot_pixbuf, 0, 0)
